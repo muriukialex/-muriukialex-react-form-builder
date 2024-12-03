@@ -1,181 +1,153 @@
-# TSDX React w/ Storybook User Guide
+# FormBuilder Component
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+The `FormBuilder` component is a versatile and reusable utility for dynamically generating forms using the `react-hook-form` library. It simplifies form management by automating validation and rendering for various input types, including password visibility toggles.
 
-> This TSDX setup is meant for developing React component libraries (not apps!) that can be published to NPM. If you’re looking to build a React-based app, you should use `create-react-app`, `razzle`, `nextjs`, `gatsby`, or `react-static`.
+---
 
-> If you’re new to TypeScript and React, checkout [this handy cheatsheet](https://github.com/sw-yx/react-typescript-cheatsheet/)
+## Features
 
-## Commands
+- Dynamically renders form fields based on configuration.
+- Built-in support for form validation with `react-hook-form`.
+- Toggles password visibility with intuitive icons.
+- Accepts custom styles using TailwindCSS.
+- Easily extensible to support additional input types or custom behavior.
 
-TSDX scaffolds your new library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
+---
 
-The recommended workflow is to run TSDX in one terminal:
+## Installation
 
-```bash
-npm start # or yarn start
-```
+1. **Install required dependencies**:
+   ```bash
+   npm install react-hook-form tailwind-merge
+   ```
+2. **Import and use the component**.
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+---
 
-Then run either Storybook or the example playground:
+## Props
 
-### Storybook
+### `FormBuilder` Props
 
-Run inside another terminal:
+| Prop              | Type                 | Description                                                      |
+| ----------------- | -------------------- | ---------------------------------------------------------------- |
+| `control`         | `Control<T>`         | Control object from `react-hook-form` to manage the form state.  |
+| `setFocus`        | `UseFormSetFocus<T>` | Function from `react-hook-form` to set focus on specific fields. |
+| `formConfigArray` | `Array<any>`         | Array defining the configuration for each field (see below).     |
+| `className`       | `string`             | Additional TailwindCSS classes for the input fields.             |
 
-```bash
-yarn storybook
-```
+### `formConfigArray` Configuration
 
-This loads the stories from `./stories`.
+Each field configuration in the `formConfigArray` should have the following properties:
 
-> NOTE: Stories should reference the components as if using the library, similar to the example playground. This means importing from the root project directory. This has been aliased in the tsconfig and the storybook webpack config as a helper.
+| Property      | Type     | Description                                                                               |
+| ------------- | -------- | ----------------------------------------------------------------------------------------- |
+| `type`        | `string` | The input type (e.g., `text`, `email`, `password`).                                       |
+| `name`        | `string` | The unique identifier for the input field.                                                |
+| `label`       | `string` | The label displayed for the input field.                                                  |
+| `rules`       | `object` | Validation rules as per `react-hook-form` (e.g., `required`, `minLength`, etc.).          |
+| `description` | `string` | Optional description text displayed below the input field when there is no error.         |
+| `className`   | `string` | Additional TailwindCSS classes for this specific input field.                             |
+| `...props`    | `any`    | Additional props passed to the `<input>` element (e.g., `placeholder`, `disabled`, etc.). |
 
-### Example
+---
 
-Then run the example inside another:
+## Example Usage
 
-```bash
-cd example
-npm i # or yarn to install dependencies
-npm start # or yarn start
-```
+### Basic Example
 
-The default example imports and live reloads whatever is in `/dist`, so if you are seeing an out of date component, make sure TSDX is running in watch mode like we recommend above. **No symlinking required**, we use [Parcel's aliasing](https://parceljs.org/module_resolution.html#aliases).
+```tsx
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import FormBuilder from './FormBuilder';
 
-To do a one-off build, use `npm run build` or `yarn build`.
+export default function App() {
+  const { control, handleSubmit, setFocus } = useForm();
 
-To run tests, use `npm test` or `yarn test`.
+  const onSubmit = (data: any) => {
+    console.log('Form Data:', data);
+  };
 
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle analysis
-
-Calculates the real cost of your library using [size-limit](https://github.com/ai/size-limit) with `npm run size` and visulize it with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/example
-  index.html
-  index.tsx       # test your component here in a demo app
-  package.json
-  tsconfig.json
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-/stories
-  Thing.stories.tsx # EDIT THIS
-/.storybook
-  main.js
-  preview.js
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
-
-#### React Testing Library
-
-We do not set up `react-testing-library` for you yet, we welcome contributions and documentation on this.
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [size-limit](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormBuilder
+        control={control}
+        setFocus={setFocus}
+        className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        formConfigArray={[
+          {
+            type: 'email',
+            name: 'email',
+            label: 'Email',
+            rules: {
+              required: {
+                value: true,
+                message: 'Email is required',
+              },
+            },
+          },
+          {
+            type: 'password',
+            name: 'password',
+            label: 'Password',
+            rules: {
+              required: {
+                value: true,
+                message: 'Password is required',
+              },
+            },
+          },
+        ]}
+      />
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4"
+      >
+        Submit
+      </button>
+    </form>
+  );
 }
 ```
 
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
+---
 
-## Module Formats
+## Customization
 
-CJS, ESModules, and UMD module formats are supported.
+### Password Visibility Toggle
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+The `FormBuilder` automatically includes password visibility toggles using the `EyeFill` and `EyeOffFill` icons. These icons are positioned using TailwindCSS classes (`absolute`, `right-4`, `top-9`) and can be customized as needed.
 
-## Deploying the Example Playground
+---
 
-The Playground is just a simple [Parcel](https://parceljs.org) app, you can deploy it anywhere you would normally deploy that. Here are some guidelines for **manually** deploying with the Netlify CLI (`npm i -g netlify-cli`):
+## Styling
 
-```bash
-cd example # if not already in the example folder
-npm run build # builds to dist
-netlify deploy # deploy the dist folder
-```
+The component uses `tailwind-merge` to allow easy combination of default and custom styles. Use the `className` prop in `FormBuilder` or individual fields to define specific styles.
 
-Alternatively, if you already have a git repo connected, you can set up continuous deployment with Netlify:
+---
 
-```bash
-netlify init
-# build command: yarn build && cd example && yarn && yarn build
-# directory to deploy: example/dist
-# pick yes for netlify.toml
-```
+## Validation
 
-## Named Exports
+Leverage `react-hook-form`'s `rules` to define validation for each field:
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+- **Required**:
+  ```js
+  rules: {
+    required: { value: true, message: 'Field is required' },
+  }
+  ```
+- **Custom Validation**:
+  ```js
+  rules: {
+    validate: value => value.length > 5 || 'Minimum length is 6 characters',
+  }
+  ```
 
-## Including Styles
+---
 
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
+## License
 
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
+This component is open-source and can be freely modified to suit your application's needs.
 
-## Publishing to NPM
+---
 
-We recommend using [np](https://github.com/sindresorhus/np).
-
-## Usage with Lerna
-
-When creating a new package with TSDX within a project set up with Lerna, you might encounter a `Cannot resolve dependency` error when trying to run the `example` project. To fix that you will need to make changes to the `package.json` file _inside the `example` directory_.
-
-The problem is that due to the nature of how dependencies are installed in Lerna projects, the aliases in the example project's `package.json` might not point to the right place, as those dependencies might have been installed in the root of your Lerna project.
-
-Change the `alias` to point to where those packages are actually installed. This depends on the directory structure of your Lerna project, so the actual path might be different from the diff below.
-
-```diff
-   "alias": {
--    "react": "../node_modules/react",
--    "react-dom": "../node_modules/react-dom"
-+    "react": "../../../node_modules/react",
-+    "react-dom": "../../../node_modules/react-dom"
-   },
-```
-
-An alternative to fixing this problem would be to remove aliases altogether and define the dependencies referenced as aliases as dev dependencies instead. [However, that might cause other problems.](https://github.com/palmerhq/tsdx/issues/64)
+Feel free to reach out with any questions or suggestions!
