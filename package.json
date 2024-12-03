@@ -35,7 +35,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "react-form-builder",
+  "name": "@muriukialex/react-form-builder",
   "author": "muriukialex",
   "module": "dist/react-form-builder.esm.js",
   "size-limit": [
