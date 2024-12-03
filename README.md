@@ -18,9 +18,14 @@ The `FormBuilder` component is a versatile and reusable utility for dynamically 
 
 1. **Install required dependencies**:
    ```bash
-   npm install react-hook-form tailwind-merge
+   npm install @muriukialex/react-form-builder react-hook-form tailwind-merge
    ```
 2. **Import and use the component**.
+
+```tsx
+import { FormBuilder } from '@muriukialex/react-form-builder';
+
+```
 
 ---
 
@@ -58,7 +63,7 @@ Each field configuration in the `formConfigArray` should have the following prop
 ```tsx
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import FormBuilder from './FormBuilder';
+import { FormBuilder } from '@muriukialex/react-form-builder';
 
 export default function App() {
   const { control, handleSubmit, setFocus } = useForm();
